@@ -3,16 +3,18 @@ class TrafficLight {
 
     public synchronized void turnGreen() {
         green = true;
-        notifyAll();
+        System.out.println("Traffic light is GREEN.");
+        notifyAll(); // Notify waiting cars that they can go
     }
 
     public synchronized void turnRed() {
         green = false;
+        System.out.println("Traffic light is RED.");
     }
 
     public synchronized void waitForGreen() throws InterruptedException {
         while (!green) {
-            wait();
+            wait(); // Wait until the light turns green
         }
     }
 }
@@ -30,6 +32,7 @@ class Car extends Thread {
             trafficLight.waitForGreen();
             System.out.println(Thread.currentThread().getName() + " is passing through the intersection.");
         } catch (InterruptedException e) {
+            System.out.println(Thread.currentThread().getName() + " was interrupted.");
         }
     }
 
@@ -46,6 +49,7 @@ public class TrafficLightSystem {
     public static void main(String[] args) throws InterruptedException {
         TrafficLight trafficLight = new TrafficLight();
 
+        // Start multiple car threads
         for (int i = 0; i < 5; i++) {
             new Car(trafficLight).start();
         }
@@ -53,7 +57,7 @@ public class TrafficLightSystem {
         // Simulate traffic light changes
         Thread.sleep(2000);
         trafficLight.turnGreen();
-        Thread.sleep(2000);
+        Thread.sleep(5000); // Keep the light green for 5 seconds
         trafficLight.turnRed();
     }
 }
